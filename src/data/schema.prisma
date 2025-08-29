@@ -1,0 +1,103 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+
+model EVCharger {
+  id                 Int              @id @default(autoincrement())
+  chargingStation_id Int?
+  name               String?          @db.VarChar(255)
+  connectorType      String?          @db.VarChar(255)
+  chargeTime         Int?
+  rangePerHour       String?          @db.VarChar(255)
+  userCase           String?          @db.VarChar(255)
+  chargingStation    chargingStation? @relation(fields: [chargingStation_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "EVCharger_ibfk_1")
+
+  @@index([chargingStation_id], map: "chargingStation_id")
+}
+
+model address {
+  id              Int               @id @default(autoincrement())
+  houseNumber     Int?
+  streetName      String?           @db.VarChar(255)
+  city_id         Int?
+  city            city?             @relation(fields: [city_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "address_ibfk_1")
+  chargingStation chargingStation[] 
+  user            user[]
+
+  @@index([city_id], map: "city_id")
+}
+
+model car {
+  id          Int     @id @default(autoincrement())
+  carModel    String? @db.VarChar(255)
+  year        Int?
+  numberPlate String? @db.VarChar(255)
+  user_id     Int
+  capacity    String? @db.VarChar(255)
+  user        user   @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "car_ibfk_1")
+
+  @@index([user_id], map: "user_id")
+}
+
+model chargingStation {
+  id                      Int                       @id @default(autoincrement())
+  address_id              Int?
+  numberOfSpaces          Int?
+  EVCharger               EVCharger[]
+  address                 address?                  @relation(fields: [address_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "chargingStation_ibfk_1")
+  favoriteChargingStation favoriteChargingStation[]
+  reservations            reservations[]
+
+  @@index([address_id], map: "address_id")
+}
+
+model city {
+  id         Int       @id @default(autoincrement())
+  postalCode Int?
+  name       String?   @db.VarChar(255)
+  address    address[]
+}
+
+model favoriteChargingStation {
+  id                 Int              @id @default(autoincrement())
+  user_id            Int
+  chargingStation_id Int
+  user               user?            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "favoriteChargingStation_ibfk_1")
+  chargingStation    chargingStation? @relation(fields: [chargingStation_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "favoriteChargingStation_ibfk_2")
+
+  @@index([chargingStation_id], map: "chargingStation_id")
+  @@index([user_id], map: "user_id")
+}
+
+model reservations {
+  id                 Int              @id @default(autoincrement())
+  chargingStation_id Int
+  user_id            Int
+  startReservation   DateTime        @db.DateTime(0)
+  endReservation     DateTime        @db.DateTime(0)
+  user               user            @relation(fields: [user_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "reservations_ibfk_1")
+  chargingStation    chargingStation? @relation(fields: [chargingStation_id], references: [id], onDelete: Cascade, onUpdate: NoAction, map: "reservations_ibfk_2")
+
+  @@index([chargingStation_id], map: "chargingStation_id")
+  @@index([user_id], map: "user_id")
+}
+
+model user {
+  id                      Int                       @id @default(autoincrement())
+  username                String                    @db.VarChar(255)
+  homeAddress_id          Int?
+  email                   String                   @unique(map: "idx_user_email_unique") @db.VarChar(255)
+  password_hash           String                   @db.VarChar(255)        
+  roles                   Json
+  car                     car[]                     
+  favoriteChargingStation favoriteChargingStation[]
+  reservations            reservations[]
+  address                 address?                  @relation(fields: [homeAddress_id], references: [id], onDelete: SetNull, onUpdate: NoAction, map: "user_ibfk_1")
+
+  @@index([homeAddress_id], map: "homeAddress_id")
+}

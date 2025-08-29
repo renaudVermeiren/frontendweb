@@ -1,0 +1,90 @@
+// Use DBML to define your database structure
+// Docs: https://dbml.dbdiagram.io/docs
+
+
+
+Table user {
+  id integer [primary key]
+  username varchar
+  homeAddress_id integer
+  email varchar
+  password_hash varchar
+  roles json
+}
+
+Table car {
+  id integer [primary key]
+  carModel varchar
+  year integer
+  numberPlate varchar
+  user_id integer
+  capacity varchar
+
+}
+
+Table reservations {
+  id integer [primary key]
+  chargingStation_id integer
+  user_id integer
+  startReservation datetime
+  endReservation datetime
+
+}
+
+Table chargingStation{
+  id integer [primary key]
+  address_id integer
+  numberOfSpaces integer
+}
+
+Table EVCharger{
+  id integer [primary key]
+  chargingStation_id integer
+  name varchar //level 1 EV charger
+  connectorType varchar
+  chargeTime integer
+  rangePerHour varchar
+  userCase varchar
+}
+
+Table favoriteChargingStation as favCharg {
+  id integer [primary key]
+  user_id integer
+  chargingStation_id integer
+}
+
+Table address {
+  id integer [primary key]
+  houseNumber integer
+  streetName varchar
+  city_id integer
+
+}
+
+Table city {
+id integer [primary key]
+postalCode integer
+name varchar
+}
+
+Ref: car.user_id > user.id // many-to-one
+Ref: favoriteChargingStation.user_id > user.id
+Ref: "chargingStation"."id" < "favoriteChargingStation"."chargingStation_id"
+
+Ref: "user"."id" < "reservations"."user_id"
+
+Ref: "chargingStation"."id" < "reservations"."chargingStation_id"
+
+
+
+Ref: "chargingStation"."id" < "EVCharger"."chargingStation_id"
+
+
+
+Ref: "address"."id" < "user"."homeAddress_id"
+
+
+
+Ref: "address"."id" < "chargingStation"."address_id"
+
+Ref: "address"."city_id" - "city"."id"
