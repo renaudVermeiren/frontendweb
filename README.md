@@ -2,7 +2,7 @@
 
 -  Renaud Vermeiren
 - E-mailadres: <renaud@vermeiren.org>
-- Applicatie is online te vinden op deze link: (https://frontendweb-2425-renaudvermeiren.onrender.com)
+- Applicatie is online te vinden op deze link: ([https://frontendweb-2425-renaudvermeiren.onrender.com](https://frontendweb-2425-renaudvermeiren.onrender.com/api/health/version))
 
 # Requirements
 
