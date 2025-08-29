@@ -1,8 +1,7 @@
-# Examenopdracht  Web Services
+#  Web Services
 
-- Student: Renaud Vermeiren
-- Studentennummer: 202301450
-- E-mailadres: <renaud.vermeiren@student.hogent.be>
+-  Renaud Vermeiren
+- E-mailadres: <renaud@vermeiren.org>
 
 # Requirements
 
